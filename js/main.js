@@ -19,13 +19,40 @@ let svg = d3.select('#vis')
   .style('border', 'solid')
   .attr('viewBox', [0, 0, width + margin.left + margin.right, height + margin.top + margin.bottom].join(' '))
 
+
+var toggleColor = (function(){
+  var currentColor = "blue";
+
+  return function() {
+    currentColor = currentColor == "blue" ? "magenta" : "blue";
+    d3.select("circle").style("fill", currentColor);
+  }})();
+
+var toggleColor2 = (function(){
+  var currentColor = "red";
+
+  return function(){
+    currentColor = currentColor == "red" ? "green" : "red";
+    d3.select("rect").style("fill", currentColor)
+    d3.select("circle").style("fill", currentColor);
+  }
+})();
+
 // Add a square 
 let rect = svg.append('rect')
   .attr('x', '100')
   .attr('y', '200')
   .attr('width', '20%')
   .attr('height', '20%')
-  .attr('fill', '#a6cee3'); 
+  .attr('fill', '#a6cee3')
+  .on("mouseover", function(){
+    d3.select(this).classed('border', true)})
+  .on('mouseout', function(){
+    d3.select(this).classed('border', false)})
+  .on('click', toggleColor)
+  .call(d3.drag()
+    .on("drag", draggingSquare));
+
 
 // Add a circle 
 let circle = svg.append('circle') 
@@ -33,6 +60,22 @@ let circle = svg.append('circle')
   .attr('cy', '250')
   .attr('r', '60')
   .attr('fill', '#b2df8a')
+  .on("mouseover", function(){
+    d3.select(this).classed('border', true)})
+  .on('mouseout', function(){
+    d3.select(this).classed('border', false)})
+  .call(d3.drag()
+    .on("drag", draggingCircle))
+  .on("dblclick", toggleColor2)
+
+  function draggingSquare(d) {
+    d3.select(this).attr('x', d.x).attr('y', d.y);
+  }
+
+  function draggingCircle(d) {
+    d3.select(this).attr('cx', d.x).attr('cy', d.y);
+  }
+
 
 
 
